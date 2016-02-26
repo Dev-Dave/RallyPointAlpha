@@ -8,28 +8,38 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.dcaouette.rallypointalpha.MainActivityFragment"
-    tools:showIn="@layout/activity_main">
+    tools:context="com.example.dcaouette.rallypointalpha.RegistrationActivityFragment"
+    tools:showIn="@layout/activity_registration">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/username"
-        android:id="@+id/userameTextView"/>
+        android:id="@+id/userameRegTextView"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/usernameEditText"/>
+        android:id="@+id/usernameRegEditText"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/password"
-        android:id="@+id/passwordTextView"/>
+        android:id="@+id/passwordRegTextView"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/passwordEditText"/>
+        android:id="@+id/passwordRegEditText"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Password"
+        android:id="@+id/passwordRegTextViewSecondary"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordRegEditTextSecondary"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,19 +50,15 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Log In"
-            android:id="@+id/loginButton"/>
+            android:text="Sign Up"
+            android:id="@+id/signupRegButton"/>
 
         <Button
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:id="@+id/signupButton"/>
+            android:text="Cancel"
+            android:id="@+id/cancelRegButton"/>
 
     </LinearLayout>
-
-
-
-
 </LinearLayout>
