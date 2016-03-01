@@ -41,7 +41,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private TextView mTextAuth;
 
     /* Firebase code */
-    private final static String ROOT_URL = "https://rallypointalpha.firebaseio.com";
     private Firebase mRef;
 
 
@@ -51,14 +50,17 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.setAndroidContext(getActivity());
+        if (savedInstanceState == null) {
+            Firebase.setAndroidContext(getActivity());
+        }
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        mRef = new Firebase(ROOT_URL).child("condition");
+        mRef = new Firebase(QuickRefs.ROOT_URL).child("condition");
 
         /*
         mRef.addValueEventListener(new ValueEventListener() {
@@ -158,7 +160,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.signupButton:
-                Log.d("sighup button:", "active");
+                Log.d("signup button:", "active");
                 startActivity(new Intent(getActivity(), RegistrationActivity.class));
                 break;
         }

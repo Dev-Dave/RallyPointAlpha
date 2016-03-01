@@ -17,6 +17,8 @@
         android:text="@string/username"
         android:id="@+id/userameTextView"/>
     <EditText
+        android:inputType="textEmailAddress"
+        android:ems="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/usernameEditText"/>
@@ -27,6 +29,8 @@
         android:text="@string/password"
         android:id="@+id/passwordTextView"/>
     <EditText
+        android:inputType="textPassword"
+        android:ems="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/passwordEditText"/>
