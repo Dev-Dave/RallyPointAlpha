@@ -1,15 +1,17 @@
 <resources>
     <string name="app_name">Rally Point Alpha</string>
     <string name="action_add_member">Add Member</string>
+    <string name="action_add_team">Add Team</string>
     <string name="action_logout">Logout</string>
     <string name="title_activity_login">Log in</string>
 
     <!-- login text -->
     <string name="username">Username (Email)</string>
     <string name="password">Password</string>
+
+    <!-- Page titles -->
     <string name="title_activity_registration">Sign Up</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_home">Home</string>
 
 
 </resources>

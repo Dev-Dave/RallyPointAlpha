@@ -28,24 +28,12 @@
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName="com.example.dcaouette.rallypointalpha.MainActivity">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.dcaouette.rallypointalpha.MainActivity" />
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName="com.example.dcaouette.rallypointalpha.MainActivity">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.dcaouette.rallypointalpha.MainActivity" />
+            android:theme="@style/AppTheme.NoActionBar">
             </activity>
     </application>
 

@@ -50,9 +50,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
+        //if (savedInstanceState == null) {
             Firebase.setAndroidContext(getActivity());
-        }
+        //}
 
     }
 

@@ -16,8 +16,6 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar ab = getActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
     }
 
 }
