@@ -62,6 +62,10 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
         mRef = new Firebase(QuickRefs.ROOT_URL).child("condition");
 
+        AuthData authData = mRef.getAuth();
+        if (authData != null) {
+            startActivity(new Intent(getActivity(), HomeActivity.class));
+        }
         /*
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -133,36 +137,34 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     public void onClick(View view) {
         int viewID = view.getId();
         switch (viewID) {
-
             case R.id.loginButton:
                 String username = (String) usernameText.getText().toString();
                 String password = (String) passwordText.getText().toString();
 
                 //bobtony@firebase.com
                 //correcthorsebatterystaple
-
                 mRef.authWithPassword(username, password, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData authData) {
-                        //System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
-                        //mTextAuth.setText(authData.getUid());
-
+                        // System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                         startActivity(new Intent(getActivity(), HomeActivity.class));
                     }
-
                     @Override
                     public void onAuthenticationError(FirebaseError firebaseError) {
                         // there was an error
-                        Log.d("not auth", "bull");
+                        Log.d("LOGIN", "Error logging in user");
                     }
                 });
+
 
                 break;
 
             case R.id.signupButton:
-                Log.d("signup button:", "active");
+                //Log.d("signup button:", "active");
                 startActivity(new Intent(getActivity(), RegistrationActivity.class));
                 break;
         }
     }
+
+
 }

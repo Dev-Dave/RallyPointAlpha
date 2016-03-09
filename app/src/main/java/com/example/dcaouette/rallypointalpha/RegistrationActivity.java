@@ -1,5 +1,6 @@
 package com.example.dcaouette.rallypointalpha;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,7 +16,8 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        ActionBar ab = getActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
     }
 
 }
