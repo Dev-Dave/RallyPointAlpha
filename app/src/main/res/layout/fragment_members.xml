@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_members_r"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,8 +10,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     tools:context="com.example.dcaouette.rallypointalpha.MembersFragment">
 
-    <ListView
-        android:id="@+id/list_view_members"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_members"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

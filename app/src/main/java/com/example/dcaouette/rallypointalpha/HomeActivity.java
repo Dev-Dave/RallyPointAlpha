@@ -2,6 +2,7 @@ package com.example.dcaouette.rallypointalpha;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,8 +29,13 @@ public class HomeActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    //private FloatingActionButton addMemberFab;
+    private FloatingActionButton addTeamFab;
 
     private Firebase mRef;
+
+    private static final int MEMBERS_PAGE = 0;
+    private static final int TEAMS_PAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
         mRef = new Firebase(QuickRefs.ROOT_URL);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        AppBarLayout.LayoutParams toolbarParams = (AppBarLayout.LayoutParams) toolbar.getLayoutParams(); // Fix scrolling issue with recycler view
+        toolbarParams.setScrollFlags(0);
         setSupportActionBar(toolbar);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -54,15 +62,58 @@ public class HomeActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
+        addMemberFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+               //         .setAction("Action", null).show();
+                MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_members_r);
+                membersFragment.addMember();
+            }
+        });
+        */
+        addTeamFab = (FloatingActionButton) findViewById(R.id.add_team_fab);
+        addTeamFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-        */
+        addTeamFab.hide();
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                switch (position) {
+                    case MEMBERS_PAGE:
+                        addTeamFab.hide();
+                        //addMemberFab.show();
+                        break;
+                    case TEAMS_PAGE:
+                        //addMemberFab.hide();
+                        addTeamFab.show();
+                        break;
+
+                    default:
+                        //addMemberFab.hide();
+                        addTeamFab.hide();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
 
@@ -106,9 +157,9 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
+                case MEMBERS_PAGE:
                     return MembersFragment.newInstance();
-                case 1:
+                case TEAMS_PAGE:
                     return TeamsFragment.newInstance();
             }
             return null;

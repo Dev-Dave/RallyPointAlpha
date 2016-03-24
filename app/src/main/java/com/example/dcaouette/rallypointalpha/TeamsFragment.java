@@ -2,6 +2,7 @@ package com.example.dcaouette.rallypointalpha;
 
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class TeamsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_teams, container, false);
 
+
         String[] teamArray = {
                 "Tennis",
                 "Band",
@@ -61,6 +63,13 @@ public class TeamsFragment extends Fragment {
         listView.setAdapter(mTeamAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        //fab.hide();
     }
 
 }

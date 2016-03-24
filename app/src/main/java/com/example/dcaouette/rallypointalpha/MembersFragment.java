@@ -1,22 +1,14 @@
 package com.example.dcaouette.rallypointalpha;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -24,7 +16,11 @@ import java.util.List;
  */
 public class MembersFragment extends Fragment {
 
-    private ArrayAdapter<String> mMemberAdapter;
+    //private ArrayAdapter<String> mMemberAdapter;
+    private MemberAdapter mMemberAdapter;
+
+    private FloatingActionButton addMemberFab;
+    private FloatingActionButton addTeamFab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,20 +35,8 @@ public class MembersFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_members, container, false);
 
-        String[] memberArray = {
-                "Joe",
-                "Mike",
-                "Dan",
-                "Angelica",
-                "Kevin",
-                "Brittany",
-                "Dave",
-                "Tom",
-                "Jessica",
-                "Tiffany"
-        };
 
-        ArrayList<String> memberList = new ArrayList<String>(Arrays.asList(memberArray));
+        /*
         //Log.d("List Test", memberList.get(1));
         mMemberAdapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -64,8 +48,33 @@ public class MembersFragment extends Fragment {
 
         ListView listView = (ListView)rootView.findViewById(R.id.list_view_members);
         listView.setAdapter(mMemberAdapter);
+        */
+
+        RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_members);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        mMemberAdapter = new MemberAdapter();
+        recyclerView.setAdapter(mMemberAdapter);
+
+        addMemberFab = (FloatingActionButton) getActivity().findViewById(R.id.add_member_fab);
+        addMemberFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //         .setAction("Action", null).show();
+                //MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_members_r);
+                mMemberAdapter.addItem();
+            }
+        });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        //fab.show();
     }
 
     public static MembersFragment newInstance() {

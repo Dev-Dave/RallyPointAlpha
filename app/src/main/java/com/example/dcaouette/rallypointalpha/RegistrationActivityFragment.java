@@ -17,6 +17,7 @@ import com.firebase.client.FirebaseError;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -122,6 +123,12 @@ public class RegistrationActivityFragment extends Fragment implements View.OnCli
             @Override
             public void onAuthenticated(AuthData authData) {
                // System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("provider", authData.getProvider());
+                if(authData.getProviderData().containsKey("email")) {
+                    map.put("email", authData.getProviderData().get("email").toString());
+                }
+                mRef.child("users").child(authData.getUid()).setValue(map);
                 startActivity(new Intent(getActivity(), HomeActivity.class));
             }
             @Override
