@@ -1,13 +1,21 @@
 package com.example.dcaouette.rallypointalpha;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by dcaouette on 3/22/16.
@@ -15,19 +23,47 @@ import java.util.Arrays;
  * Adapter for filling out members
  */
 public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder> {
-    String[] memberArray = {
-            "Joe",
-            "Mike",
-            "Dan",
-            "Angelica",
-            "Kevin",
-            "Brittany",
-            "Dave",
-            "Tom",
-            "Jessica",
-            "Tiffany"
-    };
-    ArrayList<String> memberList = new ArrayList<String>(Arrays.asList(memberArray));
+
+    private static final String MEMBERS_REF = QuickRefs.MEMBERS_URL;
+    private Firebase mRef;
+    private List<User> memberList;
+
+    public MemberAdapter(Context context) {
+        Firebase.setAndroidContext(context);
+        memberList = new ArrayList<>();
+        mRef = new Firebase(MEMBERS_REF);
+        mRef.addChildEventListener(new MembersChildEventListener());
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_member, parent, false);
+        return new ViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        // Change the text for the view
+        final User user = memberList.get(position);
+        holder.itemTextView.setText(user.getEmail());
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return memberList.size();
+    }
+
+    public void add(User user) {
+        mRef.push().setValue(user);
+        notifyDataSetChanged();
+    }
+
+    public void remove(User user) {
+        mRef.child(user.getKey()).removeValue();
+        memberList.remove(user);
+        notifyDataSetChanged();
+    }
 
     // Creates a View Holder
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -41,43 +77,56 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    removeItem(getAdapterPosition());
+                    remove(memberList.get(getAdapterPosition()));
                     return false;
                 }
             });
         }
     }
 
-    public MemberAdapter() {
+    /**
+     * Inner class for updating the view from changes in the database
+     */
+    class MembersChildEventListener implements ChildEventListener {
 
-    }
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            User user = dataSnapshot.getValue(User.class);
+            user.setKey(dataSnapshot.getKey());
+            //Log.d("Data snapshot test", user.getEmail());
+            memberList.add(0, user);
+            notifyDataSetChanged();
+        }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_member, parent, false);
-        return new ViewHolder(itemView);
-    }
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String memberName = memberList.get(position);
-        holder.itemTextView.setText(memberName);
-    }
+        }
 
-    @Override
-    public int getItemCount() {
-        // Change for data
-        return memberList.size();
-    }
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            // Remove from list when item is removed from the database
+            for (User user: memberList) {
+                if (user.getKey().equals(dataSnapshot.getKey())) {
+                    memberList.remove(user);
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
 
-    public void addItem() {
-        memberList.add(0, "test");
-        notifyDataSetChanged();
-    }
+        }
 
-    public void removeItem(int position) {
-        memberList.remove(position);
-        notifyDataSetChanged();
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+
+        }
     }
 }
+
+
 

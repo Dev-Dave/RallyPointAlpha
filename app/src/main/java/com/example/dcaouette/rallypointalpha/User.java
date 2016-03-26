@@ -1,16 +1,18 @@
 package com.example.dcaouette.rallypointalpha;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by dcaouette on 3/21/16.
  */
 public class User {
 
     private String email;
-
+    @JsonIgnore
     private String key;
 
     public User() {
-        // Empty Constructor
+        // Empty Constructor needed
     }
 
     public User(String email) {
@@ -34,3 +36,5 @@ public class User {
     }
 
 }
+
+// JsonProperty("name") // use if you want to vary the name of the value from the database representation

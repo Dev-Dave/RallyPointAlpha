@@ -16,16 +16,11 @@ import android.widget.ArrayAdapter;
  */
 public class MembersFragment extends Fragment {
 
-    //private ArrayAdapter<String> mMemberAdapter;
     private MemberAdapter mMemberAdapter;
-
-    private FloatingActionButton addMemberFab;
-    private FloatingActionButton addTeamFab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -35,46 +30,18 @@ public class MembersFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_members, container, false);
 
-
-        /*
-        //Log.d("List Test", memberList.get(1));
-        mMemberAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_member,
-                R.id.list_item_member_text,
-                memberList
-        );
-
-
-        ListView listView = (ListView)rootView.findViewById(R.id.list_view_members);
-        listView.setAdapter(mMemberAdapter);
-        */
-
         RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_members);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        mMemberAdapter = new MemberAdapter();
+        mMemberAdapter = new MemberAdapter(getActivity());
         recyclerView.setAdapter(mMemberAdapter);
-
-        addMemberFab = (FloatingActionButton) getActivity().findViewById(R.id.add_member_fab);
-        addMemberFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //         .setAction("Action", null).show();
-                //MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_members_r);
-                mMemberAdapter.addItem();
-            }
-        });
 
         return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        //fab.show();
+    // Method for fab click event
+    public void addMember() {
+        mMemberAdapter.add(new User("test@test1.com"));
     }
 
     public static MembersFragment newInstance() {
@@ -84,5 +51,6 @@ public class MembersFragment extends Fragment {
         //fragment.setArguments(args);
         return fragment;
     }
+
 
 }

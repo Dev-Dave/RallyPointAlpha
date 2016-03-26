@@ -1,12 +1,15 @@
 package com.example.dcaouette.rallypointalpha;
 
 import android.app.ActionBar;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -29,13 +32,16 @@ public class HomeActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    //private FloatingActionButton addMemberFab;
+
+    private FloatingActionButton addMemberFab;
     private FloatingActionButton addTeamFab;
+    private MembersFragment memFrag;
 
     private Firebase mRef;
 
     private static final int MEMBERS_PAGE = 0;
     private static final int TEAMS_PAGE = 1;
+    private int currentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,27 +67,29 @@ public class HomeActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        /*
+
         addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
         addMemberFab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-               // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-               //         .setAction("Action", null).show();
-                MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_members_r);
-                membersFragment.addMember();
+                memFrag.addMember();
             }
+
         });
-        */
+
         addTeamFab = (FloatingActionButton) findViewById(R.id.add_team_fab);
+        final Intent intent = new Intent(this, CreateTeamActivity.class);
+
         addTeamFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(intent);
             }
         });
-        addTeamFab.hide();
+        //addTeamFab.hide();
+        currentPage = MEMBERS_PAGE;
+        determineFabVisibility();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -93,17 +101,16 @@ public class HomeActivity extends AppCompatActivity {
 
                 switch (position) {
                     case MEMBERS_PAGE:
-                        addTeamFab.hide();
-                        //addMemberFab.show();
+                        currentPage = MEMBERS_PAGE;
+                        determineFabVisibility();
                         break;
                     case TEAMS_PAGE:
-                        //addMemberFab.hide();
-                        addTeamFab.show();
+                        currentPage = TEAMS_PAGE;
+                        determineFabVisibility();
                         break;
 
                     default:
-                        //addMemberFab.hide();
-                        addTeamFab.hide();
+                        determineFabVisibility();
                         break;
                 }
             }
@@ -158,7 +165,7 @@ public class HomeActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case MEMBERS_PAGE:
-                    return MembersFragment.newInstance();
+                    return memFrag = MembersFragment.newInstance();
                 case TEAMS_PAGE:
                     return TeamsFragment.newInstance();
             }
@@ -176,4 +183,21 @@ public class HomeActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    public void determineFabVisibility() {
+        if (currentPage == MEMBERS_PAGE) {
+            addTeamFab.hide();
+            addMemberFab.show();
+        } else {
+            addMemberFab.hide();
+            addTeamFab.show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        determineFabVisibility();
+    }
+
 }
