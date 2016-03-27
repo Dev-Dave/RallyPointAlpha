@@ -35,6 +35,12 @@ public class User {
         this.email = email;
     }
 
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("User: Key: " + key + " Email: " + email);
+        return buffer.toString();
+    }
+
 }
 
 // JsonProperty("name") // use if you want to vary the name of the value from the database representation

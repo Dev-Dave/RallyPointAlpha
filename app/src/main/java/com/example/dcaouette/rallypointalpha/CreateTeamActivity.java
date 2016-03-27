@@ -1,13 +1,15 @@
 package com.example.dcaouette.rallypointalpha;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class CreateTeamActivity extends AppCompatActivity {
+
+    FloatingActionButton confirm_fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,15 +18,22 @@ public class CreateTeamActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.finalize_team_fab);
+//        final CreateTeamActivityFragment frag = (CreateTeamActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_create_team);
+//
+//        confirm_fab = (FloatingActionButton)findViewById(R.id.finalize_team_fab);
+//        final Intent backToHomeIntent = new Intent(this, HomeActivity.class);
+//        // Initialize focus to teams page
+//        backToHomeIntent.putExtra("START_POS", 2);
+//        confirm_fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                //ToDo: Write changes to database
+//                frag.saveData();
+//                startActivity(backToHomeIntent);
+//            }
+//        });
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
 }

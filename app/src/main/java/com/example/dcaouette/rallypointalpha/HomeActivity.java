@@ -36,12 +36,13 @@ public class HomeActivity extends AppCompatActivity {
     private FloatingActionButton addMemberFab;
     private FloatingActionButton addTeamFab;
     private MembersFragment memFrag;
+    private TeamsFragment teamsFrag;
 
     private Firebase mRef;
 
     private static final int MEMBERS_PAGE = 0;
     private static final int TEAMS_PAGE = 1;
-    private int currentPage;
+    private int currentPage = MEMBERS_PAGE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +60,6 @@ public class HomeActivity extends AppCompatActivity {
         AppBarLayout.LayoutParams toolbarParams = (AppBarLayout.LayoutParams) toolbar.getLayoutParams(); // Fix scrolling issue with recycler view
         toolbarParams.setScrollFlags(0);
         setSupportActionBar(toolbar);
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
 
         addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
         addMemberFab.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +80,26 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        //addTeamFab.hide();
-        currentPage = MEMBERS_PAGE;
+
+        // Make sure the focus goes back to the teams page when the create team finishes
+        Bundle myBundle = getIntent().getExtras();
+        if (myBundle != null) {
+            int val = myBundle.getInt("START_POS", 1);
+            currentPage = val;
+        }
+
         determineFabVisibility();
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(currentPage);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -110,6 +120,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
 
                     default:
+                        currentPage = MEMBERS_PAGE;
                         determineFabVisibility();
                         break;
                 }
@@ -167,7 +178,7 @@ public class HomeActivity extends AppCompatActivity {
                 case MEMBERS_PAGE:
                     return memFrag = MembersFragment.newInstance();
                 case TEAMS_PAGE:
-                    return TeamsFragment.newInstance();
+                    return teamsFrag = TeamsFragment.newInstance();
             }
             return null;
         }

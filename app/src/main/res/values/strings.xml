@@ -15,5 +15,9 @@
     <string name="title_activity_create_team">CreateTeamActivity</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Create Team text -->
+    <string name="team_name_prompt">Team Name</string>
+    <string name="team_description_prompt">Team Description</string>
+
 
 </resources>
