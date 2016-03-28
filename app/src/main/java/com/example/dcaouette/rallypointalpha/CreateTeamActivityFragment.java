@@ -11,7 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -21,7 +27,9 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
     private EditText teamNameEditText;
     private EditText teamDescriptionEditText;
     private Firebase mRef;
+    private Firebase userGroupsRef;
     private static final String URL = QuickRefs.ROOT_URL;
+    String myGroups;
 
     public CreateTeamActivityFragment() {
 
@@ -33,6 +41,8 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         View rootView = inflater.inflate(R.layout.fragment_create_team, container, false);
         Firebase.setAndroidContext(getContext());
         mRef = new Firebase(QuickRefs.ROOT_URL);
+        userGroupsRef = mRef.child("users/" + mRef.getAuth().getUid() + "/groups");
+        //userGroupsRef.addChildEventListener();
 
         teamNameEditText = (EditText)rootView.findViewById(R.id.team_name_edit_text);
         teamDescriptionEditText = (EditText)rootView.findViewById(R.id.team_description_edit_text);
@@ -68,9 +78,21 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
     private void saveData() {
         String teamName = teamNameEditText.getText().toString();
         String teamDescription = teamDescriptionEditText.getText().toString();
-        Team team = new Team(teamName, teamDescription);
-        mRef.child("/teams").push().setValue(team);
+        String myKey = mRef.getAuth().getUid();
+        Map<String, Object> initialMembers = new HashMap();
+        initialMembers.put(myKey, new Integer(100));
+        Team team = new Team(teamName, teamDescription, initialMembers);
+        CreateTeamAdapter adapter = new CreateTeamAdapter(getContext());
+        adapter.add(team);
+        //String teamKey = team.getKey();
+        //Map<String, Object> addTeam = new HashMap();
+        //addTeam.put(teamKey, true);
+        //mRef.child("users").child("groups").updateChildren(addTeam);
         Log.d("Fab", "Fab found");
+
+
+
+
     }
 
     // Go back to Home menue with focus on Teams tab
@@ -78,6 +100,34 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         final Intent backToHomeIntent = new Intent(getActivity(), HomeActivity.class);
         backToHomeIntent.putExtra("START_POS", 2);
         startActivity(backToHomeIntent);
+    }
+
+    class GroupChildEventListener implements ChildEventListener {
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+
+        }
     }
 
 }
