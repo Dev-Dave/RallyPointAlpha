@@ -46,7 +46,6 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
         // Change the text for the view
         final User user = memberList.get(position);
         holder.itemTextView.setText(user.getEmail());
-
     }
 
     @Override

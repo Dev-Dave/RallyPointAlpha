@@ -33,11 +33,11 @@
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CreateTeamActivity"
             android:label="@string/title_activity_create_team"
@@ -45,6 +45,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.dcaouette.rallypointalpha.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".SearchMemberActivity"
+            android:label="@string/title_activity_search_member"
+            android:theme="@style/AppTheme.NoActionBar">
+            <!--
+            <meta-data android:name="com.example.dcaouette.rallypointalpha.searchable"
+                android:resource="@xml/searchable" /> -->
         </activity>
     </application>
 

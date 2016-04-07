@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +26,9 @@ import java.util.Arrays;
 public class TeamsFragment extends Fragment {
 
     private FloatingActionButton addTeamFab;
+    private TeamAdapter mTeamAdapter;
 
-    private ArrayAdapter<String> mTeamAdapter;
+    //private ArrayAdapter<String> mTeamAdapter;
 
     public TeamsFragment() {
         // Required empty public constructor
@@ -50,7 +53,7 @@ public class TeamsFragment extends Fragment {
         addTeamFab = (FloatingActionButton) getActivity().findViewById(R.id.add_team_fab);
 
         //addTeamFab.hide();
-
+        /*
         String[] teamArray = {
                 "Tennis",
                 "Band",
@@ -70,6 +73,13 @@ public class TeamsFragment extends Fragment {
 
         ListView listView = (ListView)rootView.findViewById(R.id.list_view_teams);
         listView.setAdapter(mTeamAdapter);
+        */
+
+        RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_teams);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        mTeamAdapter = new TeamAdapter(getActivity());
+        recyclerView.setAdapter(mTeamAdapter);
 
         return rootView;
     }

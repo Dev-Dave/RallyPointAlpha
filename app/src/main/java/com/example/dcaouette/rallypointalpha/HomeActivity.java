@@ -62,18 +62,17 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
+        final Intent memberSearchIntent = new Intent(this, SearchMemberActivity.class);
         addMemberFab.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-                memFrag.addMember();
+                //memFrag.addMember();
+                startActivity(memberSearchIntent);
             }
-
         });
 
         addTeamFab = (FloatingActionButton) findViewById(R.id.add_team_fab);
         final Intent intent = new Intent(this, CreateTeamActivity.class);
-
         addTeamFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

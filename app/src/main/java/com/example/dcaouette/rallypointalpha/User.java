@@ -2,12 +2,16 @@ package com.example.dcaouette.rallypointalpha;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Map;
+
 /**
  * Created by dcaouette on 3/21/16.
  */
 public class User {
 
     private String email;
+    private Map<String, Object> groups;
+    private String provider;
     @JsonIgnore
     private String key;
 
@@ -33,6 +37,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Map<String, Object> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Map<String, Object> groups) {
+        this.groups = groups;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
     public String toString() {

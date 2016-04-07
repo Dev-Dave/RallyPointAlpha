@@ -19,5 +19,9 @@
     <string name="team_name_prompt">Team Name</string>
     <string name="team_description_prompt">Team Description</string>
 
+    <!-- Search text -->
+    <string name="title_activity_search_member">SearchMemberActivity</string>
+    <string name="member_search_text">Search for Members</string>
+
 
 </resources>

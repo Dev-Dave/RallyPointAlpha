@@ -23,6 +23,7 @@ public class CreateTeamAdapter {
     public CreateTeamAdapter(Context context) {
         Firebase.setAndroidContext(context);
         teamsRef = new Firebase(QuickRefs.TEAMS_URL);
+        //teamsRef.removeEventListener();
         teamsRef.addChildEventListener(new CreateTeamChildEventListener());
         userKey = teamsRef.getAuth().getUid();
         userRef = new Firebase(QuickRefs.USERS_URL).child(userKey + "/groups");

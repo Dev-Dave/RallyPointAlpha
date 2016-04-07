@@ -10,6 +10,9 @@ import java.util.Map;
  */
 public class Team {
 
+    @JsonIgnore
+    private String key;
+
     @JsonProperty("name")
     private String teamName;
 
@@ -18,9 +21,6 @@ public class Team {
 
     @JsonProperty("members")
     private Map<String, Object> teamMembers;
-
-    @JsonIgnore
-    private String key;
 
     public Team() {
 
