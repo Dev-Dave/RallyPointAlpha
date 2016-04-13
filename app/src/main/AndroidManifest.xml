@@ -51,8 +51,12 @@
             android:label="@string/title_activity_search_member"
             android:theme="@style/AppTheme.NoActionBar">
             <!--
-            <meta-data android:name="com.example.dcaouette.rallypointalpha.searchable"
+            <meta-data
+                android:name="com.example.dcaouette.rallypointalpha.searchable"
                 android:resource="@xml/searchable" /> -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dcaouette.rallypointalpha.HomeActivity"/>
         </activity>
     </application>
 

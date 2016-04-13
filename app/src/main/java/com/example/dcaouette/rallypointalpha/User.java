@@ -11,6 +11,7 @@ public class User {
 
     private String email;
     private Map<String, Object> groups;
+    private Map<String, Object> members;
     private String provider;
     @JsonIgnore
     private String key;
@@ -45,6 +46,14 @@ public class User {
 
     public void setGroups(Map<String, Object> groups) {
         this.groups = groups;
+    }
+
+    public Map<String, Object> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Map<String, Object> members) {
+        this.members = members;
     }
 
     public String getProvider() {

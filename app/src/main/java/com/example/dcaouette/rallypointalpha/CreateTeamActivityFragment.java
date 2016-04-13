@@ -1,5 +1,6 @@
 package com.example.dcaouette.rallypointalpha;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -88,25 +89,50 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         //Map<String, Object> addTeam = new HashMap();
         //addTeam.put(teamKey, true);
         //mRef.child("users").child("groups").updateChildren(addTeam);
-        Log.d("Fab", "Fab found");
-
-
-
-
+        //Log.d("Fab", "Fab found");
     }
 
-    // Go back to Home menue with focus on Teams tab
+    // Go back to Home menu with focus on Teams tab
     private void launchBack() {
         final Intent backToHomeIntent = new Intent(getActivity(), HomeActivity.class);
         backToHomeIntent.putExtra("START_POS", 2);
         startActivity(backToHomeIntent);
     }
 
-    class GroupChildEventListener implements ChildEventListener {
+}
+
+/**
+ * Created by dcaouette on 3/27/16.
+ */
+class CreateTeamAdapter {
+
+    private Firebase userRef;
+    private Firebase teamsRef;
+    private String userKey;
+
+    public CreateTeamAdapter(Context context) {
+        Firebase.setAndroidContext(context);
+        teamsRef = new Firebase(QuickRefs.TEAMS_URL);
+        //teamsRef.removeEventListener();
+        teamsRef.addChildEventListener(new CreateTeamChildEventListener());
+        userKey = teamsRef.getAuth().getUid();
+        userRef = new Firebase(QuickRefs.USERS_URL).child(userKey + "/groups");
+    }
+
+    public void add(Team team) {
+        Map<String, Object> teamLeader = new HashMap();
+        teamLeader.put(userKey, new Integer(1000));
+        team.setTeamMembers(teamLeader);
+        teamsRef.push().setValue(team);
+    }
+
+    class CreateTeamChildEventListener implements ChildEventListener {
 
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
+            Map<String, Object> map = new HashMap<>();
+            map.put(dataSnapshot.getKey(), true);
+            userRef.updateChildren(map);
         }
 
         @Override
