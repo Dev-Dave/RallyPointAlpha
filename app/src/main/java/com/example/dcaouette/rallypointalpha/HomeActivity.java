@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +63,9 @@ public class HomeActivity extends AppCompatActivity {
         toolbarParams.setScrollFlags(0);
         setSupportActionBar(toolbar);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        currentPage = sharedPreferences.getInt("STARTING_POS", 0);
+
         addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
         final Intent memberSearchIntent = new Intent(this, SearchMemberActivity.class);
         addMemberFab.setOnClickListener(new View.OnClickListener() {
@@ -83,8 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         // Make sure the focus goes back to the teams page when the create team finishes
         Bundle myBundle = getIntent().getExtras();
         if (myBundle != null) {
-            int val = myBundle.getInt("START_POS", 1);
-            currentPage = val;
+            currentPage = myBundle.getInt("START_POS", 1);
         }
 
         determineFabVisibility();
@@ -208,6 +212,15 @@ public class HomeActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         determineFabVisibility();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("STARTING_POS", currentPage);
+        editor.apply();
     }
 
 }

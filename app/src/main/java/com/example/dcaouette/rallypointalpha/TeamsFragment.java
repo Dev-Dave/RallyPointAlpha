@@ -1,20 +1,16 @@
 package com.example.dcaouette.rallypointalpha;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
@@ -23,7 +19,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /**
@@ -42,8 +37,7 @@ public class TeamsFragment extends Fragment {
 
 
     public static TeamsFragment newInstance() {
-        TeamsFragment fragment = new TeamsFragment();
-        return fragment;
+        return new TeamsFragment();
     }
 
     @Override
@@ -110,27 +104,30 @@ public class TeamsFragment extends Fragment {
 }
 
 /**
+ * Class for displaying user's teams
  * Created by dcaouette on 4/2/16.
  */
 class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
 
+    private Context context;
     private ArrayList<Team> teamList;
     private String userKey;
-    private Firebase mRef;
+    private Firebase usersRef;
     private Firebase userGroupsRef;
     private Firebase teamsRef;
 
 
     public TeamAdapter(Context context) {
+        this.context = context;
         Firebase.setAndroidContext(context);
-        mRef = new Firebase(QuickRefs.ROOT_URL);
-        userKey = mRef.getAuth().getUid();
-        userGroupsRef = mRef.child("/users/" + userKey + "/groups");
-        teamsRef = mRef.child("/teams");
+        usersRef = new Firebase(QuickRefs.USERS_URL);
+        userKey = usersRef.getAuth().getUid();
+        userGroupsRef = usersRef.child(userKey).child("groups");
+        teamsRef = usersRef.getParent().child("teams");
         teamsRef.addChildEventListener(new TeamsChildEventListener());
         userGroupsRef.addChildEventListener(new UserGroupsChildEventListener());
 
-        teamList = new ArrayList<Team>();
+        teamList = new ArrayList<>();
         //Log.d("SMALL", );
 
     }
@@ -152,13 +149,46 @@ class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
         return teamList.size();
     }
 
+    public void remove(Team team) {
+        //System.out.println("Start Removal");
+        String teamKey = team.getKey();
+        //System.out.println("Team to remove" + teamKey);
+        // Determine if team leader left, if so then add points for new leader
+        userGroupsRef.child(teamKey).removeValue();
+        teamsRef.child(teamKey).child("members").child(userKey).removeValue();
+        teamList.remove(team);
+        notifyDataSetChanged();
+    }
+
+    private void launchTeamDetails(Team team) {
+        Intent teamDetailsIntent = new Intent(context, TeamDetailsActivity.class);
+        String teamKey = team.getKey();
+        teamDetailsIntent.putExtra("TEAM_KEY", teamKey);
+        context.startActivity(teamDetailsIntent);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView teamTextView;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             teamTextView = (TextView)itemView.findViewById(R.id.list_item_team_text);
+            teamTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Team team = teamList.get(getAdapterPosition());
+                    launchTeamDetails(team);
+                }
+            });
+            teamTextView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Team team = teamList.get(getAdapterPosition());
+                    remove(team);
+                    return false;
+                }
+            });
         }
     }
 
@@ -166,9 +196,14 @@ class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
 
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            if (userGroupsRef.child(dataSnapshot.getKey())!= null) {
-                Team team = dataSnapshot.getValue(Team.class);
-                team.setKey(dataSnapshot.getKey());
+            Team team = dataSnapshot.getValue(Team.class);
+            team.setKey(dataSnapshot.getKey());
+            if (team.getTeamMembers() == null)
+                return;
+            //System.out.println("Team Name: " + team.getTeamName());
+            ArrayList<String> members = new ArrayList<>(team.getTeamMembers().keySet());
+            //System.out.println("Team Members: " + members.toString());
+            if (members.contains(userKey)) {
                 teamList.add(0, team);
                 //Log.d("BIG", "Child added to teams");
                 notifyDataSetChanged();
@@ -177,7 +212,12 @@ class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            Team team = dataSnapshot.getValue(Team.class);
+            team.setKey(dataSnapshot.getKey());
+            if (team.getTeamMembers() == null) {
+                teamsRef.child(team.getKey()).removeValue();
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -211,11 +251,14 @@ class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
+            /*
             //Log.d("BIG", "Im about to delete");
-
-            if (teamsRef.child(dataSnapshot.getKey())!= null) {
+            String groupKey = (String)dataSnapshot.getKey();
+            System.out.println("Team Removed");
+            teamsRef.child(groupKey).child("/members/" + userKey).removeValue();
+            if (teamsRef.child(groupKey)!= null) {
                 //Team team = teamsRef.child(dataSnapshot.getKey()).child("/");
-                teamsRef.child(dataSnapshot.getKey()).child("/members/" + userKey).removeValue();
+
                 //Log.d("BIG", "Im deleting");
                 for (Team team: teamList) {
                     if (team.getKey().equals(dataSnapshot.getKey())) {
@@ -224,7 +267,7 @@ class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>{
                     }
                 }
                 notifyDataSetChanged();
-            }
+            }*/
         }
 
         @Override

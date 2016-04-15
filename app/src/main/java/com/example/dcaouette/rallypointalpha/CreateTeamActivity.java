@@ -17,6 +17,10 @@ public class CreateTeamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_team);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
 
 //        final CreateTeamActivityFragment frag = (CreateTeamActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_create_team);
 //
@@ -28,7 +32,7 @@ public class CreateTeamActivity extends AppCompatActivity {
 //            @Override
 //            public void onClick(View view) {
 //
-//                //ToDo: Write changes to database
+//                // Write changes to database
 //                frag.saveData();
 //                startActivity(backToHomeIntent);
 //            }
