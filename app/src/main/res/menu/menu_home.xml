@@ -4,18 +4,6 @@
     tools:context="com.example.dcaouette.rallypointalpha.HomeActivity">
 
     <item
-        android:id="@+id/action_add_member"
-        android:title="@string/action_add_member"
-        android:icon="@drawable/ic_add_member_24dp"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_add_team"
-        android:title="@string/action_add_team"
-        android:icon="@drawable/ic_add_team_24dp"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
         android:title="@string/action_logout"

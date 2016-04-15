@@ -17,6 +17,8 @@ public class TeamDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("My Details");
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

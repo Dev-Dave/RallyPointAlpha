@@ -35,11 +35,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private Button loginButton;
     private Button signupButton;
 
-    private Button mFoggyButton;
-    private Button mSunnyButton;
-    private TextView mTextCondition;
-    private TextView mTextAuth;
-
     /* Firebase code */
     private Firebase mRef;
 
@@ -50,9 +45,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             Firebase.setAndroidContext(getActivity());
-        //}
+        }
 
     }
 
@@ -60,11 +55,13 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     public void onStart() {
         super.onStart();
 
-        mRef = new Firebase(QuickRefs.ROOT_URL).child("condition");
+        mRef = new Firebase(QuickRefs.ROOT_URL);
 
         AuthData authData = mRef.getAuth();
         if (authData != null) {
-            startActivity(new Intent(getActivity(), HomeActivity.class));
+            final Intent startIntent = new Intent(getActivity(), HomeActivity.class);
+            startIntent.putExtra("START_POS", 0);
+            startActivity(startIntent);
         }
         /*
         mRef.addValueEventListener(new ValueEventListener() {
@@ -138,8 +135,8 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         int viewID = view.getId();
         switch (viewID) {
             case R.id.loginButton:
-                String username = (String) usernameText.getText().toString();
-                String password = (String) passwordText.getText().toString();
+                String username = usernameText.getText().toString();
+                String password = passwordText.getText().toString();
 
                 //bobtony@firebase.com
                 //correcthorsebatterystaple
@@ -147,7 +144,9 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
                     @Override
                     public void onAuthenticated(AuthData authData) {
                         // System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
-                        startActivity(new Intent(getActivity(), HomeActivity.class));
+                        final Intent startIntent = new Intent(getActivity(), HomeActivity.class);
+                        startIntent.putExtra("START_POS", 0);
+                        startActivity(startIntent);
                     }
                     @Override
                     public void onAuthenticationError(FirebaseError firebaseError) {

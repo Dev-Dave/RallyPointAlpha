@@ -28,7 +28,10 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -45,6 +48,8 @@ public class HomeActivity extends AppCompatActivity {
     private static final int MEMBERS_PAGE = 0;
     private static final int TEAMS_PAGE = 1;
     private int currentPage = MEMBERS_PAGE;
+
+    private String pageTitle = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +68,33 @@ public class HomeActivity extends AppCompatActivity {
         toolbarParams.setScrollFlags(0);
         setSupportActionBar(toolbar);
 
+        // Retrieve the correct starting page values
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         currentPage = sharedPreferences.getInt("STARTING_POS", 0);
+        //pageTitle = sharedPreferences.getString("HOME_TITLE", "");
+
+        // Change title to be user's email
+        if (getSupportActionBar() != null) {
+            //getSupportActionBar().setTitle(pageTitle);
+            final String userKey = mRef.getAuth().getUid();
+            mRef.child("users").child(userKey).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    user.setKey(dataSnapshot.getKey());
+                    String userEmail = user.getEmail();
+                    if (!pageTitle.equals(userEmail)) {
+                        pageTitle = user.getEmail();
+                        getSupportActionBar().setTitle(pageTitle);
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
 
         addMemberFab = (FloatingActionButton) findViewById(R.id.add_member_fab);
         final Intent memberSearchIntent = new Intent(this, SearchMemberActivity.class);
@@ -220,6 +250,7 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("STARTING_POS", currentPage);
+        //editor.putString("HOME_TITLE", pageTitle);
         editor.apply();
     }
 

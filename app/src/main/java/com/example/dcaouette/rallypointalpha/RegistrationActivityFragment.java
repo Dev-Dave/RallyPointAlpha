@@ -74,16 +74,16 @@ public class RegistrationActivityFragment extends Fragment implements View.OnCli
         int viewID = view.getId();
         switch (viewID) {
             case R.id.signupRegButton:
-                String email = (String) emailText.getText().toString();
-                String passwordOne = (String) passwordTextOne.getText().toString();
-                String passwordTwo = (String) passwordTextTwo.getText().toString();
+                String email = emailText.getText().toString();
+                String passwordOne = passwordTextOne.getText().toString();
+                String passwordTwo = passwordTextTwo.getText().toString();
                 if (passwordConfirmed(passwordOne, passwordTwo)) {
                     // passwords good
-                    Log.d("PasswordCheck", "Good");
+                    //Log.d("PasswordCheck", "Good");
                     attempCreateUser(email, passwordOne);
                 } else {
                     // passwords missmatched
-                    Log.d("PasswordCheck", "Missmatch");
+                    //Log.d("PasswordCheck", "Missmatch");
                 }
                 break;
             case R.id.cancelRegButton:
@@ -123,13 +123,15 @@ public class RegistrationActivityFragment extends Fragment implements View.OnCli
             @Override
             public void onAuthenticated(AuthData authData) {
                // System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put("provider", authData.getProvider());
                 if(authData.getProviderData().containsKey("email")) {
                     map.put("email", authData.getProviderData().get("email").toString());
                 }
                 mRef.child("users").child(authData.getUid()).setValue(map);
-                startActivity(new Intent(getActivity(), HomeActivity.class));
+                final Intent startIntent = new Intent(getActivity(), HomeActivity.class);
+                startIntent.putExtra("START_POS", 0);
+                startActivity(startIntent);
             }
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
