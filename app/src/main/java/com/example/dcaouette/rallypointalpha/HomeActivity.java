@@ -118,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
         // Make sure the focus goes back to the teams page when the create team finishes
         Bundle myBundle = getIntent().getExtras();
         if (myBundle != null) {
-            currentPage = myBundle.getInt("START_POS", 1);
+            currentPage = myBundle.getInt("START_POS", 0);
         }
 
         determineFabVisibility();

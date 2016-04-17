@@ -45,7 +45,9 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_create_team, container, false);
-        Firebase.setAndroidContext(getContext());
+        if (savedInstanceState == null) {
+            Firebase.setAndroidContext(getContext());
+        }
         teamsRef = new Firebase(QuickRefs.TEAMS_URL);
         usersRef = new Firebase(QuickRefs.USERS_URL);
         mainUserKey = usersRef.getAuth().getUid();

@@ -9,13 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +77,7 @@ public class RegistrationActivityFragment extends Fragment implements View.OnCli
                 if (passwordConfirmed(passwordOne, passwordTwo)) {
                     // passwords good
                     //Log.d("PasswordCheck", "Good");
-                    attempCreateUser(email, passwordOne);
+                    attemptCreateUser(email, passwordOne);
                 } else {
                     // passwords missmatched
                     //Log.d("PasswordCheck", "Missmatch");
@@ -102,7 +99,7 @@ public class RegistrationActivityFragment extends Fragment implements View.OnCli
         }
     }
 
-    private void attempCreateUser(final String userEmail, final String userPassword) {
+    private void attemptCreateUser(final String userEmail, final String userPassword) {
         mRef.createUser(userEmail, userPassword, new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {

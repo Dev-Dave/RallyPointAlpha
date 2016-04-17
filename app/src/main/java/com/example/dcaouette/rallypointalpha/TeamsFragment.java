@@ -35,7 +35,6 @@ public class TeamsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     public static TeamsFragment newInstance() {
         return new TeamsFragment();
     }
