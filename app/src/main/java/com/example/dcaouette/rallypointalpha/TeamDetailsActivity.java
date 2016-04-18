@@ -20,6 +20,7 @@ public class TeamDetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -30,6 +31,12 @@ public class TeamDetailsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    public void setNewActionBarTitle(String newTitle) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(newTitle);
+        }
     }
 
 }

@@ -32,6 +32,17 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/details_team_description_text_view"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Current Status"
+        android:id="@+id/details_status_title_text_view"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/details_status_text_view"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_details_members"
         android:layout_width="match_parent"
