@@ -68,6 +68,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.dcaouette.rallypointalpha.HomeActivity" />
         </activity>
+        <activity
+            android:name=".CreateRallyActivity"
+            android:label="@string/title_activity_create_rally"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dcaouette.rallypointalpha.TeamDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".AddTeamMemberActivity"
+            android:label="@string/title_activity_add_team_member"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dcaouette.rallypointalpha.TeamDetailsActivity" />
+        </activity>
     </application>
 
 </manifest>

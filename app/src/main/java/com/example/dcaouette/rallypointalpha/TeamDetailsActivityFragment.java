@@ -2,7 +2,9 @@ package com.example.dcaouette.rallypointalpha;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +60,8 @@ public class TeamDetailsActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_team_details, container, false);
 
+        final TeamDetailsActivity activity = (TeamDetailsActivity)getActivity();
+
         teamNameTextView = (TextView)rootView.findViewById(R.id.details_team_name_text_view);
         teamDescriptionTextView = (TextView)rootView.findViewById(R.id.details_team_description_text_view);
         userStatus = (TextView)rootView.findViewById(R.id.details_status_text_view);
@@ -65,6 +69,9 @@ public class TeamDetailsActivityFragment extends Fragment {
         Bundle teamBundle = getActivity().getIntent().getExtras();
         if (teamBundle != null) {
             teamKey = teamBundle.getString("TEAM_KEY");
+        } else {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            teamKey = sharedPreferences.getString("TEAM_KEY", "");
         }
         Log.d("(Team Key: )", teamKey);
         rootRef = new Firebase(QuickRefs.ROOT_URL);
@@ -77,7 +84,8 @@ public class TeamDetailsActivityFragment extends Fragment {
                     Team team = dataSnapshot.getValue(Team.class);
                     team.setKey(dataSnapshot.getKey());
                     //System.out.println("TESTSTESTES");
-                    ((TeamDetailsActivity)getActivity()).setNewActionBarTitle(team.getTeamName());
+                    if (activity!=null)
+                        activity.setNewActionBarTitle(team.getTeamName());
                     teamNameTextView.setText(team.getTeamName());
                     teamDescriptionTextView.setText(team.getTeamDescription());
                 }
@@ -102,6 +110,16 @@ public class TeamDetailsActivityFragment extends Fragment {
     public void setStatus(String newStatus, int colorInt) {
         userStatus.setText(newStatus);
         userStatus.setTextColor(colorInt);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("TEAM_KEY", teamKey);
+        //editor.putString("HOME_TITLE", pageTitle);
+        editor.apply();
     }
 }
 
@@ -205,18 +223,21 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
             updateSponsorList(sponsorList, memberList);
             if (mainUserKey.equals(user.getKey())) {
                 detailsFragment.setStatus("Team Leader", Color.RED);
+                ((TeamDetailsActivity)context).showTeamLeaderActions();
             }
             holder.memberText.setText(user.getEmail() + " Points: " + value + " (Team Leader)");
             holder.memberText.setTextColor(Color.RED);
         } else if (sponsorList.contains(user)) {
             if (mainUserKey.equals(user.getKey())) {
                 detailsFragment.setStatus("Sponsor", Color.parseColor("#F5C507"));
+                ((TeamDetailsActivity)context).showTeamSponsorActions();
             }
             holder.memberText.setText(user.getEmail() + " Points: " + value + " (Sponsor)");
             holder.memberText.setTextColor(Color.parseColor("#F5C507"));
         }else {
             if (mainUserKey.equals(user.getKey())) {
                 detailsFragment.setStatus("Member", Color.parseColor("#57D404"));
+                ((TeamDetailsActivity)context).showTeamMemberActions();
             }
             holder.memberText.setText(user.getEmail() + " Points: " + value);
             holder.memberText.setTextColor(Color.parseColor("#57D404"));
