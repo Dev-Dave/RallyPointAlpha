@@ -38,6 +38,7 @@ public class TeamDetailsActivityFragment extends Fragment {
     private TextView teamDescriptionTextView;
     private TextView userStatus;
     private TeamDetailsAdapter teamDetailsAdapter;
+    private RallyAdapter rallyAdapter;
 
     public TeamDetailsActivityFragment() {
     }
@@ -103,6 +104,12 @@ public class TeamDetailsActivityFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         teamDetailsAdapter = new TeamDetailsAdapter(getActivity(), this, rootRef, teamsRef);
         recyclerView.setAdapter(teamDetailsAdapter);
+
+        RecyclerView rallyRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_details_rally_points);
+        rallyRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rallyRecyclerView.setHasFixedSize(true);
+        rallyAdapter = new RallyAdapter(getActivity(), rootRef, teamKey);
+        rallyRecyclerView.setAdapter(rallyAdapter);
 
         return rootView;
     }
@@ -323,5 +330,93 @@ class MemberValuePair {
     }
 }
 
+/**
+ * Class for displaying team members
+ */
+class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
 
+    private Context context;
+    private Firebase rootRef;
+    private String teamKey;
+    private ArrayList<RallyPoint> rallyPointsList;
 
+    public RallyAdapter(Context context, Firebase rootRef, String teamKey) {
+        Firebase.setAndroidContext(context);
+        this.context = context;
+        this.rootRef = rootRef;
+        this.teamKey = teamKey;
+        rallyPointsList = new ArrayList<>();
+        Query rallyPointQuery = this.rootRef.child(QuickRefs.RALLYPOINTS);
+        rallyPointQuery.orderByChild("teamKey").equalTo(this.teamKey);
+        rallyPointQuery.addChildEventListener(new RallyPointChildEventListener());
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_details_rally_points, parent, false);
+        return new ViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        RallyPoint rallyPoint = rallyPointsList.get(position);
+        holder.rallyPointName.setText(rallyPoint.getName());
+    }
+
+    @Override
+    public int getItemCount() {
+        return rallyPointsList.size();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView rallyPointName;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            rallyPointName = (TextView)itemView.findViewById(R.id.list_item_details_rally_points_text);
+        }
+    }
+
+    class RallyPointChildEventListener implements ChildEventListener {
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            RallyPoint rallyPoint = dataSnapshot.getValue(RallyPoint.class);
+            rallyPoint.setKey(dataSnapshot.getKey());
+            //System.out.println("Team Key: " + teamKey + " dataKey: " + rallyPoint.getTeamKey());
+            if (rallyPoint.getTeamKey().equals(teamKey)) {
+                rallyPointsList.add(rallyPoint);
+                notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            RallyPoint deletedRP = dataSnapshot.getValue(RallyPoint.class);
+            deletedRP.setKey(dataSnapshot.getKey());
+            for (RallyPoint rallyPoint: rallyPointsList) {
+                if (rallyPoint.equals(deletedRP)) {
+                    rallyPointsList.remove(rallyPoint);
+                    break;
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+
+        }
+    }
+}

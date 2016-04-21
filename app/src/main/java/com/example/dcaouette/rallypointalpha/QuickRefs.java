@@ -6,6 +6,7 @@ package com.example.dcaouette.rallypointalpha;
 public class QuickRefs {
     public static final String TEAMS = "teams";
     public static final String USERS = "users";
+    public static final String RALLYPOINTS = "rallypoints";
     public static final String ROOT_URL =  "https://rallypointalpha.firebaseio.com";
     public static final String MEMBERS_URL = ROOT_URL + "/members";
     public static final String USERS_URL = ROOT_URL + "/users";

@@ -78,6 +78,8 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         int viewID = view.getId();
         switch (viewID) {
             case R.id.createTeamButton:
+                if (teamNameEditText.getText().toString().isEmpty()||teamDescriptionEditText.getText().toString().isEmpty())
+                    return;
                 saveData();
                 launchBack();
                 break;

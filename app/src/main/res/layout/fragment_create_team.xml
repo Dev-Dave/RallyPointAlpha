@@ -19,7 +19,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="text|textCapWords"
         android:id="@+id/team_name_edit_text"/>
 
     <TextView
@@ -30,7 +30,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
+        android:inputType="text|textMultiLine|textCapSentences"
         android:id="@+id/team_description_edit_text"/>
 
     <TextView

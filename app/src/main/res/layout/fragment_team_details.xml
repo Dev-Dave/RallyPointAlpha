@@ -43,9 +43,26 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/details_status_text_view"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rally Points"
+        android:id="@+id/details_rally_points_title_text_view"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_details_rally_points"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Members"
+        android:id="@+id/details_members_title_text_view"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_details_members"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_weight="1"
+        android:layout_height="0dp" />
 
 </LinearLayout>
