@@ -2,6 +2,7 @@ package com.example.dcaouette.rallypointalpha;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -40,6 +41,8 @@ public class TeamDetailsActivityFragment extends Fragment {
     private TeamDetailsAdapter teamDetailsAdapter;
     private RallyAdapter rallyAdapter;
 
+    private int currentStatus = 0;
+
     public TeamDetailsActivityFragment() {
     }
 
@@ -74,7 +77,7 @@ public class TeamDetailsActivityFragment extends Fragment {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             teamKey = sharedPreferences.getString("TEAM_KEY", "");
         }
-        Log.d("(Team Key: )", teamKey);
+        //Log.d("(Team Key: )", teamKey);
         rootRef = new Firebase(QuickRefs.ROOT_URL);
         teamsRef = rootRef.child("teams/" + teamKey);
         Query teamsQuery = rootRef.child("teams/" + teamKey);
@@ -108,7 +111,7 @@ public class TeamDetailsActivityFragment extends Fragment {
         RecyclerView rallyRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_details_rally_points);
         rallyRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         rallyRecyclerView.setHasFixedSize(true);
-        rallyAdapter = new RallyAdapter(getActivity(), rootRef, teamKey);
+        rallyAdapter = new RallyAdapter(getActivity(), this, rootRef, teamKey);
         rallyRecyclerView.setAdapter(rallyAdapter);
 
         return rootView;
@@ -128,6 +131,14 @@ public class TeamDetailsActivityFragment extends Fragment {
         //editor.putString("HOME_TITLE", pageTitle);
         editor.apply();
     }
+
+    public void setCurrentStatus(int status) {
+        currentStatus = status;
+    }
+
+    public int getCurrentStatus() {
+        return currentStatus;
+    }
 }
 
 /**
@@ -143,6 +154,10 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
     private String mainUserKey;
     private ArrayList<MemberValuePair> memberList;
     private ArrayList<User> sponsorList;
+    // constants (for deleting rally points
+    private static final int TEAM_LEADER = 1;
+    private static final int TEAM_SPONSOR = 2;
+    private static final int TEAM_MEMBER = 3;
 
     public TeamDetailsAdapter(Context context, TeamDetailsActivityFragment detailsFragment, Firebase newRootRef, Firebase newTeamRef) {
         this.context = context;
@@ -229,6 +244,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         if (position == 0) {
             updateSponsorList(sponsorList, memberList);
             if (mainUserKey.equals(user.getKey())) {
+                detailsFragment.setCurrentStatus(TEAM_LEADER);
                 detailsFragment.setStatus("Team Leader", Color.RED);
                 ((TeamDetailsActivity)context).showTeamLeaderActions();
             }
@@ -236,6 +252,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
             holder.memberText.setTextColor(Color.RED);
         } else if (sponsorList.contains(user)) {
             if (mainUserKey.equals(user.getKey())) {
+                detailsFragment.setCurrentStatus(TEAM_SPONSOR);
                 detailsFragment.setStatus("Sponsor", Color.parseColor("#F5C507"));
                 ((TeamDetailsActivity)context).showTeamSponsorActions();
             }
@@ -243,6 +260,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
             holder.memberText.setTextColor(Color.parseColor("#F5C507"));
         }else {
             if (mainUserKey.equals(user.getKey())) {
+                detailsFragment.setCurrentStatus(TEAM_MEMBER);
                 detailsFragment.setStatus("Member", Color.parseColor("#57D404"));
                 ((TeamDetailsActivity)context).showTeamMemberActions();
             }
@@ -264,7 +282,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         int n = newMemberList.size();
         //for (MemberValuePair m: newMemberList)
             //System.out.print(" MemberList: " + m.getValue());
-        System.out.println();
+        //System.out.println();
         // Find median
         double median;
         int nth;
@@ -280,7 +298,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
             //System.out.println("Upperbound: " + (nth-1) + "  " + upperBound);
             //System.out.println("Lowerbound: " + (nth) + "  " + lowerBound);
         }
-        System.out.println("Median: " + median);
+        //System.out.println("Median: " + median);
         for (MemberValuePair pair: newMemberList) {
             if (Double.compare(pair.getValue().doubleValue(), median)>0) {
                 sponsorList.add(pair.getUser());
@@ -339,8 +357,9 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
     private Firebase rootRef;
     private String teamKey;
     private ArrayList<RallyPoint> rallyPointsList;
+    private TeamDetailsActivityFragment teamDetailsActivityFragment;
 
-    public RallyAdapter(Context context, Firebase rootRef, String teamKey) {
+    public RallyAdapter(Context context, TeamDetailsActivityFragment fragment, Firebase rootRef, String teamKey) {
         Firebase.setAndroidContext(context);
         this.context = context;
         this.rootRef = rootRef;
@@ -349,6 +368,7 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
         Query rallyPointQuery = this.rootRef.child(QuickRefs.RALLYPOINTS);
         rallyPointQuery.orderByChild("teamKey").equalTo(this.teamKey);
         rallyPointQuery.addChildEventListener(new RallyPointChildEventListener());
+        teamDetailsActivityFragment = fragment;
     }
 
     @Override
@@ -375,6 +395,28 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             rallyPointName = (TextView)itemView.findViewById(R.id.list_item_details_rally_points_text);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    RallyPoint rallyPoint = rallyPointsList.get(getAdapterPosition());
+                    if (teamDetailsActivityFragment.getCurrentStatus() == 1) {
+                        // remove rally point
+                        rootRef.child(QuickRefs.RALLYPOINTS).child(rallyPoint.getKey()).removeValue();
+                        rallyPointsList.remove(rallyPoint);
+                        notifyDataSetChanged();
+                    }
+                    return false;
+                }
+            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RallyPoint rallyPoint = rallyPointsList.get(getAdapterPosition());
+                    Intent rallyPointIntent = new Intent(context, RallyPointDetailsActivity.class);
+                    rallyPointIntent.putExtra("RALLY_KEY", rallyPoint.getKey());
+                    context.startActivity(rallyPointIntent);
+                }
+            });
         }
     }
 
@@ -386,7 +428,7 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
             rallyPoint.setKey(dataSnapshot.getKey());
             //System.out.println("Team Key: " + teamKey + " dataKey: " + rallyPoint.getTeamKey());
             if (rallyPoint.getTeamKey().equals(teamKey)) {
-                rallyPointsList.add(rallyPoint);
+                rallyPointsList.add(0, rallyPoint);
                 notifyDataSetChanged();
             }
         }

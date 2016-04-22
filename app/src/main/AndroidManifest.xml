@@ -84,6 +84,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.dcaouette.rallypointalpha.TeamDetailsActivity" />
         </activity>
+        <activity
+            android:name=".RallyPointDetailsActivity"
+            android:label="@string/title_activity_rally_point_details"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dcaouette.rallypointalpha.TeamDetailsActivity" />
+        </activity>
     </application>
 
 </manifest>

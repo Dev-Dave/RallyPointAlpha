@@ -34,4 +34,6 @@
     <string name="button_text_add_team_members">Add Members</string>
     <string name="button_text_cancel_rally_point">Cancel</string>
     <string name="button_text_create_rally_point">Add Rally Point</string>
+
+    <string name="title_activity_rally_point_details">Rally Point Details</string>
 </resources>
