@@ -158,6 +158,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
     private static final int TEAM_LEADER = 1;
     private static final int TEAM_SPONSOR = 2;
     private static final int TEAM_MEMBER = 3;
+    private String teamLeaderKey = "";
 
     public TeamDetailsAdapter(Context context, TeamDetailsActivityFragment detailsFragment, Firebase newRootRef, Firebase newTeamRef) {
         this.context = context;
@@ -167,59 +168,18 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         rootRef = newRootRef;
         mainUserKey = rootRef.getAuth().getUid();
         teamRef = newTeamRef;
-        teamRef.child("members").addValueEventListener(new ValueEventListener() {
+
+        final Firebase myQuery = teamRef.child(QuickRefs.MEMBERS);
+        myQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                memberList = new ArrayList<>();
+                for(MemberValuePair pair: memberList) {
+                    memberList.remove(pair);
+                }
+                System.out.println("Hi!!!!!: " + dataSnapshot.getKey());
                 memberRank = teamRef.child("members").orderByValue();
-                memberRank.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if (dataSnapshot == null)
-                            return;
-                        String memberKey = dataSnapshot.getKey();
-                        final Integer memberValue = dataSnapshot.getValue(Integer.class);
-                        // Retrieve user with key
-                        Query userQuery = rootRef.child("users/" + memberKey);
-                        userQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                user.setKey(dataSnapshot.getKey());
-                                MemberValuePair memberValuePair = new MemberValuePair(user, memberValue);
-                                memberList.add(0, memberValuePair);
-                                notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
-
-                            }
-                        });
-                        notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-
+                memberRank.addChildEventListener(new OrderChildEventListener());
+                //notifyDataSetChanged();
             }
 
             @Override
@@ -242,6 +202,8 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         User user = map.getUser();
         Integer value = map.getValue();
         if (position == 0) {
+            System.out.println(memberList.get(position));
+            System.out.println(memberList);
             updateSponsorList(sponsorList, memberList);
             if (mainUserKey.equals(user.getKey())) {
                 detailsFragment.setCurrentStatus(TEAM_LEADER);
@@ -323,29 +285,59 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         }
     }
 
-}
+    class OrderChildEventListener implements ChildEventListener {
 
-class MemberValuePair {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            String memberKey = dataSnapshot.getKey();
+            teamLeaderKey = memberKey;
+            final Integer memberValue = dataSnapshot.getValue(Integer.class);
+            final MemberValuePair memberValuePair = new MemberValuePair(new User(""), memberValue);
+            memberList.add(0, memberValuePair);
+            // Retrieve user with key
+            Firebase userRef = rootRef.child("users/" + memberKey);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    user.setKey(dataSnapshot.getKey());
+                    memberValuePair.setUser(user);
+                    //memberList.add(0, memberValuePair);
+                    //System.out.println("Hey: " + memberValuePair.getUser().getEmail());
+                    notifyDataSetChanged();
+                }
 
-    private User user;
-    private Integer value;
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
 
-    public MemberValuePair(User newUser, Integer newValue) {
-        user = newUser;
-        value = newValue;
+                }
+            });
+
+            System.out.println("New Member: " + memberKey);
+            //notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+
+        }
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-
-    public String toString() {
-        return "MemberValuePair: User: " + user.getEmail() + " Value: " + value;
-    }
 }
 
 /**
@@ -414,6 +406,7 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
                     RallyPoint rallyPoint = rallyPointsList.get(getAdapterPosition());
                     Intent rallyPointIntent = new Intent(context, RallyPointDetailsActivity.class);
                     rallyPointIntent.putExtra("RALLY_KEY", rallyPoint.getKey());
+                    rallyPointIntent.putExtra("TEAM_KEY", teamKey);
                     context.startActivity(rallyPointIntent);
                 }
             });
@@ -461,4 +454,7 @@ class RallyAdapter extends RecyclerView.Adapter<RallyAdapter.ViewHolder> {
 
         }
     }
+
 }
+
+

@@ -32,17 +32,37 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/rally_point_details_description_text"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Attendees"
+        android:id="@+id/details_attendees_title_text_view"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_details_attendees"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="right">
+        android:layout_gravity="end">
 
         <Button
-            android:layout_weight="1"
+            android:layout_weight=".5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Bail"
+            android:backgroundTint="#E64E4E"
+            android:id="@+id/bailButton"/>
+
+        <Button
+            android:layout_weight=".5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Rally Up"
+            android:backgroundTint="#57D404"
             android:id="@+id/rallyUpButton"/>
 
     </LinearLayout>

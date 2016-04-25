@@ -2,6 +2,8 @@ package com.example.dcaouette.rallypointalpha;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Map;
+
 /**
  * Created by dcaouette on 4/19/16.
  */
@@ -11,6 +13,7 @@ public class RallyPoint {
     private String name;
     private String description;
     private String teamKey;
+    private Map<String, Object> attendees;
 
     @JsonIgnore
     private String key;
@@ -47,6 +50,14 @@ public class RallyPoint {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setAttendees(Map<String, Object> newAttendees) {
+        attendees = newAttendees;
+    }
+
+    public Map<String, Object> getAttendees() {
+        return attendees;
     }
 
     public void setTeamKey(String teamKey) {
