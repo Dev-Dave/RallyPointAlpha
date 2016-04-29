@@ -173,9 +173,7 @@ class TeamDetailsAdapter extends RecyclerView.Adapter<TeamDetailsAdapter.ViewHol
         myQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(MemberValuePair pair: memberList) {
-                    memberList.remove(pair);
-                }
+                memberList = new ArrayList<MemberValuePair>();
                 System.out.println("Hi!!!!!: " + dataSnapshot.getKey());
                 memberRank = teamRef.child("members").orderByValue();
                 memberRank.addChildEventListener(new OrderChildEventListener());

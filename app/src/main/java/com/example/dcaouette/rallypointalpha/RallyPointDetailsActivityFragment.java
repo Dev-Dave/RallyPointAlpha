@@ -19,6 +19,8 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +34,9 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
 
     private TextView rallyPointNameTextView;
     private TextView rallyPointDescriptionTextView;
+    private TextView rallyPointPointsTextView;
+    private TextView rallyPointDate;
+    private TextView rallyPointTime;
     private Button bailButton;
     private Button rallyUpButton;
 
@@ -41,6 +46,7 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
     private RallyPointDetailsActivity activity;
     private Map<String, Object> rallyPointAttendeesList;
     private RallyPointAttendeesAdapter rallyPointAttendeesAdapter;
+    private Integer mainUserPoints = 0;
 
     public RallyPointDetailsActivityFragment() {
     }
@@ -61,9 +67,12 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
         activity = (RallyPointDetailsActivity)getActivity();
         rallyPointAttendeesList = new HashMap<>();
 
-
         rallyPointNameTextView = (TextView)rootView.findViewById(R.id.rally_point_details_name_text);
         rallyPointDescriptionTextView = (TextView)rootView.findViewById(R.id.rally_point_details_description_text);
+        rallyPointPointsTextView = (TextView)rootView.findViewById(R.id.rally_point_details_points_text);
+        rallyPointDate = (TextView)rootView.findViewById(R.id.rally_point_details_date_text);
+        rallyPointTime = (TextView)rootView.findViewById(R.id.rally_point_details_time_text);
+
 
         bailButton = (Button)rootView.findViewById(R.id.bailButton);
         bailButton.setVisibility(View.GONE);
@@ -77,11 +86,15 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 RallyPoint rallyPoint = dataSnapshot.getValue(RallyPoint.class);
+                if (rallyPoint == null)
+                    return;
                 rallyPoint.setKey(dataSnapshot.getKey());
                 if (activity != null && activity.getSupportActionBar() != null)
                     activity.setTitle(rallyPoint.getName());
                 rallyPointNameTextView.setText(rallyPoint.getName());
                 rallyPointDescriptionTextView.setText((rallyPoint.getDescription()));
+                rallyPointDate.setText(rallyPoint.getDate());
+                rallyPointTime.setText(rallyPoint.getTime());
                 if (rallyPoint.getAttendees() == null || !rallyPoint.getAttendees().containsKey(mainUserKey)) {
                     bailButton.setVisibility(View.GONE);
                     rallyUpButton.setVisibility(View.VISIBLE);
@@ -92,6 +105,19 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
                     rallyUpButton.setVisibility(View.GONE);
                     bailButton.setVisibility(View.GONE);
                 }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        rootRef.child(QuickRefs.TEAMS).child(teamKey).child(QuickRefs.MEMBERS).child(mainUserKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mainUserPoints = dataSnapshot.getValue(Integer.class);
+                rallyPointPointsTextView.setText(mainUserPoints.toString());
             }
 
             @Override
@@ -125,12 +151,21 @@ public class RallyPointDetailsActivityFragment extends Fragment implements View.
     public void rallyUp() {
         Map<String, Object> map = new HashMap<>();
         map.put(mainUserKey, QuickRefs.UNRANKED);
+
+        //System.out.println("User points: " + mainUserPoints.toString());
+        Integer newPoints = mainUserPoints + QuickRefs.USER_ATTEND;
+        rootRef.child(QuickRefs.TEAMS).child(teamKey).child(QuickRefs.MEMBERS).child(mainUserKey).setValue(newPoints);
+
         rootRef.child(QuickRefs.RALLYPOINTS).child(rallyPointKey).child(QuickRefs.ATTENDEES).updateChildren(map);
         rallyUpButton.setVisibility(View.GONE);
         bailButton.setVisibility(View.VISIBLE);
     }
 
     public void bail() {
+        Integer newPoints = mainUserPoints - QuickRefs.USER_BAIL;
+        if (newPoints < 0) { newPoints = 0; }
+        rootRef.child(QuickRefs.TEAMS).child(teamKey).child(QuickRefs.MEMBERS).child(mainUserKey).setValue(newPoints);
+
         rootRef.child(QuickRefs.RALLYPOINTS).child(rallyPointKey).child(QuickRefs.ATTENDEES).child(mainUserKey).removeValue();
         bailButton.setVisibility(View.GONE);
         rallyUpButton.setVisibility(View.VISIBLE);
@@ -287,12 +322,22 @@ class RallyPointAttendeesAdapter extends RecyclerView.Adapter<RallyPointAttendee
                 public void onClick(View v) {
                     MemberRallyGroup grouping = attendeeUserList.get(getAdapterPosition());
                     User user = grouping.getUser();
-                    Integer newPoints = grouping.getUserPoints() - QuickRefs.USER_BAIL;
+                    Integer newPoints = grouping.getUserPoints() - QuickRefs.ASSIGN_BAIL;
                     if (newPoints < 0) {
                         newPoints = 0;
                     }
                     rootRef.child(QuickRefs.TEAMS).child(teamKey).child(QuickRefs.MEMBERS).child(user.getKey()).setValue(newPoints);
                     rootRef.child(QuickRefs.RALLYPOINTS).child(rallyPointKey).child(QuickRefs.ATTENDEES).child(user.getKey()).setValue(QuickRefs.BAILED);
+                }
+            });
+            attendedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MemberRallyGroup grouping = attendeeUserList.get(getAdapterPosition());
+                    User user = grouping.getUser();
+                    Integer newPoints = grouping.getUserPoints() + QuickRefs.ASSIGN_ATTEND;
+                    rootRef.child(QuickRefs.TEAMS).child(teamKey).child(QuickRefs.MEMBERS).child(user.getKey()).setValue(newPoints);
+                    rootRef.child(QuickRefs.RALLYPOINTS).child(rallyPointKey).child(QuickRefs.ATTENDEES).child(user.getKey()).setValue(QuickRefs.ATTENDED);
                 }
             });
         }

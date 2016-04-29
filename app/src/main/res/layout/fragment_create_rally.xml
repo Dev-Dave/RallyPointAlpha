@@ -32,6 +32,37 @@
         android:inputType="text|textMultiLine|textCapSentences"
         android:id="@+id/rally_point_description_text"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:id="@+id/rally_point_date_title"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/rally_point_date_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:id="@+id/rally_point_time_title"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/rally_point_time_text" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

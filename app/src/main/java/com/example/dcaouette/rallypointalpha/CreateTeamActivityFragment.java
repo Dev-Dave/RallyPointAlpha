@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,6 +33,7 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
 
     private EditText teamNameEditText;
     private EditText teamDescriptionEditText;
+    private Firebase rootRef;
     private Firebase teamsRef;
     private Firebase usersRef;
     private String mainUserKey;
@@ -48,6 +50,7 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         if (savedInstanceState == null) {
             Firebase.setAndroidContext(getContext());
         }
+        rootRef = new Firebase(QuickRefs.ROOT_URL);
         teamsRef = new Firebase(QuickRefs.TEAMS_URL);
         usersRef = new Firebase(QuickRefs.USERS_URL);
         mainUserKey = usersRef.getAuth().getUid();
@@ -123,6 +126,22 @@ public class CreateTeamActivityFragment extends Fragment implements View.OnClick
         final Intent backToHomeIntent = new Intent(getActivity(), HomeActivity.class);
         backToHomeIntent.putExtra("START_POS", 2);
         startActivity(backToHomeIntent);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_logout) {
+            rootRef.unauth();
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
